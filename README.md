@@ -1,7 +1,7 @@
 # gin-jwt-react-query-auth
 
- - Gin
- - react-query-auth
+ - gin-jwt https://github.com/appleboy/gin-jwt
+ - react-query-auth https://github.com/alan2207/react-query-auth
 
 ## Backend(Go)
 
