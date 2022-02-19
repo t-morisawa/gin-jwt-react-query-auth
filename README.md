@@ -34,3 +34,9 @@ when installed, go.mod and go.sum are updated.
 https://zenn.dev/hrs/articles/go-gin-air-docker
 
 ## Frontend(React)
+
+```
+cd front
+npm install
+npm start
+```
