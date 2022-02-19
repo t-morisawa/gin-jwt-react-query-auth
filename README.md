@@ -19,6 +19,16 @@ docker-compose run --rm web go mod tidy
 docker-compose up -d
 ```
 
+### add package
+
+```
+docker-compose exec web sh
+export GO111MODULE=on
+go get github.com/appleboy/gin-jwt/v2
+```
+
+when installed, go.mod and go.sum are updated.
+
 ### ref 
 
 https://zenn.dev/hrs/articles/go-gin-air-docker
