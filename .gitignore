@@ -1,1 +1,4 @@
 .DS_Store
+src/.air.toml
+src/go.sum
+src/tmp/main
