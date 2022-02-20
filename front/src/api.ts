@@ -1,4 +1,4 @@
-import { storage, get_token_from_res } from './utils';
+import { storage } from './utils';
 
 interface AuthResponse {
   user: User;
