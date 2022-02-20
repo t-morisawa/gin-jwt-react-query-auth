@@ -17,7 +17,7 @@ type login struct {
 
 var identityKey = "id"
 
-func helloHandler(c *gin.Context) {
+func meHandler(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
 	user, _ := c.Get(identityKey)
 	c.JSON(200, gin.H{
@@ -140,7 +140,7 @@ func main() {
 	auth.GET("/refresh_token", authMiddleware.RefreshHandler)
 	auth.Use(authMiddleware.MiddlewareFunc())
 	{
-		auth.GET("/hello", helloHandler)
+		auth.GET("/me", meHandler)
 	}
 
 	if err := http.ListenAndServe(":"+port, r); err != nil {
