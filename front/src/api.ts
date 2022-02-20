@@ -33,6 +33,9 @@ export async function loginWithEmailAndPassword(data): Promise<AuthResponse> {
   return window
     .fetch('/auth/login', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },  
       body: JSON.stringify(data),
     })
     .then(handleApiResponse);
@@ -44,6 +47,9 @@ export async function registerWithEmailAndPassword(
   return window
     .fetch('/auth/register', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },  
       body: JSON.stringify(data),
     })
     .then(handleApiResponse);

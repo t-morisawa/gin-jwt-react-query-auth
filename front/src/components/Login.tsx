@@ -21,8 +21,8 @@ export function Login() {
       >
         <input
           autoComplete="new-password"
-          placeholder="email"
-          name="email"
+          placeholder="username"
+          name="username"
           onChange={onChange}
         />
         <input
