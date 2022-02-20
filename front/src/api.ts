@@ -37,18 +37,7 @@ export async function loginWithEmailAndPassword(data): Promise<AuthResponse> {
       },  
       body: JSON.stringify(data),
     })
-    .then(handleApiResponse)
-    .then(response => {
-        // FIXME API response は型定義すること
-        storage.setToken(response['token']);
-        const authResponse: AuthResponse = {
-            user: {
-                email: 'fixme@example.com',
-            },
-            jwt: response['token'],
-        };
-        return authResponse;
-    })
+    .then(handleApiResponse);
 }
 
 export async function registerWithEmailAndPassword(
