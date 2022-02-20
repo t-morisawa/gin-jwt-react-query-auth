@@ -36,13 +36,15 @@ async function loadUser() {
 
 async function loginFn(data: LoginCredentials) {
   const response = await loginWithEmailAndPassword(data);
-  const user = await handleUserResponse(response);
+  handleUserResponse(response);
+  const user = await loadUser();
   return user;
 }
 
 async function registerFn(data: RegisterCredentials) {
   const response = await registerWithEmailAndPassword(data);
-  const user = await handleUserResponse(response);
+  handleUserResponse(response);
+  const user = await loadUser();
   return user;
 }
 
