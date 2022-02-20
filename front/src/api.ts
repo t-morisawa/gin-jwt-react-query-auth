@@ -11,8 +11,6 @@ export interface User {
   name?: string;
 }
 
-const API_BASE_URL = process.env.REACT_APP_API_URL
-
 export async function handleApiResponse(response) {
   const data = await response.json();
 
@@ -24,7 +22,7 @@ export async function handleApiResponse(response) {
 }
 
 export async function getUserProfile() {
-  return await fetch(API_BASE_URL + '/auth/me', {
+  return await fetch('/auth/me', {
     headers: {
       Authorization: storage.getToken(),
     },
@@ -33,7 +31,7 @@ export async function getUserProfile() {
 
 export async function loginWithEmailAndPassword(data): Promise<AuthResponse> {
   return window
-    .fetch(API_BASE_URL + '/auth/login', {
+    .fetch('/auth/login', {
       method: 'POST',
       body: JSON.stringify(data),
     })
@@ -44,7 +42,7 @@ export async function registerWithEmailAndPassword(
   data
 ): Promise<AuthResponse> {
   return window
-    .fetch(API_BASE_URL + '/auth/register', {
+    .fetch('/auth/register', {
       method: 'POST',
       body: JSON.stringify(data),
     })
