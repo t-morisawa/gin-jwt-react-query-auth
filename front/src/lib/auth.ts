@@ -6,6 +6,8 @@ import {
   User,
 } from '../api';
 import { storage } from '../utils';
+import Loader from '../components/Loader';
+import ErrorComponent from '../components/ErrorComponent';
 
 export type LoginCredentials = {
   email: string;
@@ -57,6 +59,8 @@ const authConfig = {
   loginFn,
   registerFn,
   logoutFn,
+  "LoaderComponent": Loader,
+  ErrorComponent,
 };
 
 const { AuthProvider, AuthConsumer, useAuth } = initReactQueryAuth<
