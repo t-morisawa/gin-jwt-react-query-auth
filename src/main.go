@@ -50,20 +50,7 @@ func main() {
 		Timeout:     time.Hour,
 		MaxRefresh:  time.Hour,
 		IdentityKey: identityKey,
-		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*User); ok {
-				return jwt.MapClaims{
-					identityKey: v.UserName,
-				}
-			}
-			return jwt.MapClaims{}
-		},
-		IdentityHandler: func(c *gin.Context) interface{} {
-			claims := jwt.ExtractClaims(c)
-			return &User{
-				UserName: claims[identityKey].(string),
-			}
-		},
+		// ログイン(認証). 認証OKの場合は, PayloadFuncにチェーンされる.
 		Authenticator: func(c *gin.Context) (interface{}, error) {
 			var loginVals login
 			if err := c.ShouldBind(&loginVals); err != nil {
@@ -82,6 +69,25 @@ func main() {
 
 			return nil, jwt.ErrFailedAuthentication
 		},
+		// ログイン認証OK後, JWTのクレームに含めるデータを生成する
+		PayloadFunc: func(data interface{}) jwt.MapClaims {
+			if v, ok := data.(*User); ok {
+				return jwt.MapClaims{
+					identityKey: v.UserName,
+				}
+			}
+			return jwt.MapClaims{}
+		},
+		// jwtのクレームからidを取得しAuthorizatorに渡す
+		IdentityHandler: func(c *gin.Context) interface{} {
+			claims := jwt.ExtractClaims(c)
+			return &User{
+				UserName: claims[identityKey].(string),
+			}
+		},
+		// 認可処理.
+		// 1. JWTが有効であるかをチェックする
+		// 2. 当該のユーザがリソースにアクセス可能かをチェックする
 		Authorizator: func(data interface{}, c *gin.Context) bool {
 			if v, ok := data.(*User); ok && v.UserName == "admin" {
 				return true
@@ -126,6 +132,9 @@ func main() {
 		log.Fatal("authMiddleware.MiddlewareInit() Error:" + errInit.Error())
 	}
 
+	// LoginHandlerはログイン処理にあたる.
+	// カスタマイズは Authenticator, PayloadFunc, LoginResponse によって行う.
+	// レスポンスボディにJWTが含まれる.
 	r.POST("/auth/login", authMiddleware.LoginHandler)
 
 	r.NoRoute(authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
@@ -135,9 +144,14 @@ func main() {
 	})
 
 	auth := r.Group("/auth")
-	// Refresh time can be longer than token timeout
+
+	// トークンを作り直す. トークンが有効である必要がある.
 	auth.GET("/refresh_token", authMiddleware.RefreshHandler)
+
+	// JWTで認可を行うためのmiddleware.
+	// カスタマイズは IdentityHandler, Authorizator によって行う.
 	auth.Use(authMiddleware.MiddlewareFunc())
+
 	{
 		auth.GET("/me", meHandler)
 	}
