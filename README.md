@@ -28,6 +28,18 @@ go mod tidy
 
 when installed, go.mod and go.sum are updated.
 
+### test
+
+```
+docker-compose exec web sh
+export CGO_ENABLED=0
+go test ./...
+```
+
+if CGO_ENABLED=1, tests cannot be run. with message 'exec: "gcc": executable file not found in $PATH.'
+
+https://zenn.dev/tomi/articles/2020-10-22-go-docker-test
+
 ### ref 
 
 https://zenn.dev/hrs/articles/go-gin-air-docker
