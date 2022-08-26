@@ -1,6 +1,8 @@
 package db
 
 import (
+	"errors"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -13,11 +15,11 @@ type User struct {
 	email      string
 }
 
-func main() {
+func dbConnect() (int, error) {
 	dsn := "user:password@tcp(gin-jwt-react-query-auth_db_1:3306)/database?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("failed to connect database")
+		return 1, errors.New("failed to connect database")
 	}
 
 	// Migrate the schema
@@ -39,4 +41,6 @@ func main() {
 
 	// Delete - delete product
 	db.Delete(&product, 1)
+
+	return 0, nil
 }
