@@ -27,22 +27,21 @@ func dbConnect() (int, error) {
 	db.AutoMigrate(&User{})
 
 	// Create
-	user := User{FirstName: "toma", LastName: "morisawa", Email: "morisawa@exmaple.com", Status: true}
-	db.Create(&user)
+	db.Create(&User{FirstName: "toma", LastName: "morisawa", Email: "morisawa@exmaple.com", Status: true})
 
 	// Read
-	var product User
-	// db.First(&product, 1)                           // find product with integer primary key
-	db.First(&product, "last_name = ?", "morisawa") // find product with code D42
+	var user User
+	// db.First(&user, 1)                           // find user with integer primary key
+	db.First(&user, "last_name = ?", "morisawa") // find user with code D42
 
-	// Update - update product's price to 200
-	db.Model(&product).Update("first_name", "toma")
+	// Update - update user's price to 200
+	db.Model(&user).Update("first_name", "toma")
 	// Update - update multiple fields
-	db.Model(&product).Updates(User{FirstName: "toma2", LastName: "morisawa2", Email: "morisawa@exmaple.com"})
-	db.Model(&product).Updates(map[string]interface{}{"first_name": "toma3", "last_name": "morisawa3"})
+	db.Model(&user).Updates(User{FirstName: "toma2", LastName: "morisawa2", Email: "morisawa2@exmaple.com"})
+	db.Model(&user).Updates(map[string]interface{}{"first_name": "toma3", "last_name": "morisawa3", "email": "morisawa3@exmaple.com"})
 
-	// Delete - delete product
-	db.Delete(&product, 1)
+	// Delete - delete user
+	db.Delete(&user, "last_name = ?", "morisawa") // find user with code D42
 
 	return 0, nil
 }
