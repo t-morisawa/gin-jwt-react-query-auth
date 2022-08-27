@@ -7,7 +7,7 @@ func TestDbConnect(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
-	if result != 1 {
+	if result != 0 {
 		t.Fatal("failed test")
 	}
 }
