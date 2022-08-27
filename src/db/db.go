@@ -9,7 +9,6 @@ import (
 
 type User struct {
 	gorm.Model
-	// id         int16
 	FirstName string
 	LastName  string
 	Email     string
@@ -36,12 +35,14 @@ func dbConnect() (int, error) {
 
 	// Update - update user's price to 200
 	db.Model(&user).Update("first_name", "toma")
-	// Update - update multiple fields
-	db.Model(&user).Updates(User{FirstName: "toma2", LastName: "morisawa2", Email: "morisawa2@exmaple.com"})
-	db.Model(&user).Updates(map[string]interface{}{"first_name": "toma3", "last_name": "morisawa3", "email": "morisawa3@exmaple.com"})
 
-	// Delete - delete user
-	db.Delete(&user, "last_name = ?", "morisawa") // find user with code D42
+	// Update - update multiple fields
+	db.Model(&user).Updates(User{FirstName: "toma2", Email: "morisawa2@exmaple.com"})
+	db.Model(&user).Updates(map[string]interface{}{"first_name": "toma3", "email": "morisawa3@exmaple.com"})
+
+	// gorm.Modelを使う場合は論理削除となる
+	// https://gorm.io/ja_JP/docs/delete.html#%E8%AB%96%E7%90%86%E5%89%8A%E9%99%A4
+	db.Where("last_name = ?", "morisawa").Delete(&User{}) // find user with code D42
 
 	return 0, nil
 }
