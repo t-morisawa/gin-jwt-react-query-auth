@@ -10,9 +10,10 @@ import (
 type User struct {
 	gorm.Model
 	// id         int16
-	first_name string
-	last_name  string
-	email      string
+	FirstName string
+	LastName  string
+	Email     string
+	Status    bool
 }
 
 func dbConnect() (int, error) {
@@ -26,17 +27,18 @@ func dbConnect() (int, error) {
 	db.AutoMigrate(&User{})
 
 	// Create
-	db.Create(&User{first_name: "toma", last_name: "morisawa", email: "morisawa@exmaple.com"})
+	user := User{FirstName: "toma", LastName: "morisawa", Email: "morisawa@exmaple.com", Status: true}
+	db.Create(&user)
 
 	// Read
 	var product User
-	db.First(&product, 1)                           // find product with integer primary key
+	// db.First(&product, 1)                           // find product with integer primary key
 	db.First(&product, "last_name = ?", "morisawa") // find product with code D42
 
 	// Update - update product's price to 200
 	db.Model(&product).Update("first_name", "toma")
 	// Update - update multiple fields
-	db.Model(&product).Updates(User{first_name: "toma2", last_name: "morisawa2", email: "morisawa@exmaple.com"})
+	db.Model(&product).Updates(User{FirstName: "toma2", LastName: "morisawa2", Email: "morisawa@exmaple.com"})
 	db.Model(&product).Updates(map[string]interface{}{"first_name": "toma3", "last_name": "morisawa3"})
 
 	// Delete - delete product
