@@ -2,6 +2,9 @@ package db
 
 import (
 	"errors"
+	"fmt"
+	"math/rand"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -9,9 +12,9 @@ import (
 
 type User struct {
 	gorm.Model
-	FirstName string
-	LastName  string
-	Email     string
+	FirstName string `gorm:"size:255"`
+	LastName  string `gorm:"size:255"`
+	Email     string `gorm:"size:255"`
 	Status    bool
 }
 
@@ -22,11 +25,14 @@ func dbConnect() (int, error) {
 		return 1, errors.New("failed to connect database")
 	}
 
-	// Migrate the schema
+	// マイグレーション
+	// 内容によってはsqlファイルの初期作成を上書きする
 	db.AutoMigrate(&User{})
 
-	// Create
-	db.Create(&User{FirstName: "toma", LastName: "morisawa", Email: "morisawa@exmaple.com", Status: true})
+	// ユーザ作成
+	rand.Seed(time.Now().UnixNano())
+	random_str := fmt.Sprint(rand.Intn(9999))
+	db.Create(&User{FirstName: "toma", LastName: "morisawa", Email: "morisawa" + random_str + "@exmaple.com", Status: true})
 
 	// Read
 	var user User
@@ -37,8 +43,8 @@ func dbConnect() (int, error) {
 	db.Model(&user).Update("first_name", "toma")
 
 	// Update - update multiple fields
-	db.Model(&user).Updates(User{FirstName: "toma2", Email: "morisawa2@exmaple.com"})
-	db.Model(&user).Updates(map[string]interface{}{"first_name": "toma3", "email": "morisawa3@exmaple.com"})
+	db.Model(&user).Updates(User{FirstName: "toma2"})
+	db.Model(&user).Updates(map[string]interface{}{"first_name": "toma3"})
 
 	// gorm.Modelを使う場合は論理削除となる
 	// https://gorm.io/ja_JP/docs/delete.html#%E8%AB%96%E7%90%86%E5%89%8A%E9%99%A4
