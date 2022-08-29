@@ -18,9 +18,20 @@ type User struct {
 	Status    bool
 }
 
+const DSN = "user:password@tcp(gin-jwt-react-query-auth_db_1:3306)/database?charset=utf8mb4&parseTime=True&loc=Local"
+
+func CreateUser(user *User) error {
+	db, err := gorm.Open(mysql.Open(DSN), &gorm.Config{})
+	if err != nil {
+		return errors.New("failed to connect database")
+	}
+	db.Create(user)
+
+	return nil
+}
+
 func dbConnect() (int, error) {
-	dsn := "user:password@tcp(gin-jwt-react-query-auth_db_1:3306)/database?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(DSN), &gorm.Config{})
 	if err != nil {
 		return 1, errors.New("failed to connect database")
 	}
