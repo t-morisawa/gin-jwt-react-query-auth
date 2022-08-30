@@ -9,8 +9,10 @@ import (
 )
 
 type User struct {
+	// タグは下記を参照
+	// https://gorm.io/ja_JP/docs/models.html#%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89%E3%81%AB%E6%8C%87%E5%AE%9A%E5%8F%AF%E8%83%BD%E3%81%AA%E3%82%BF%E3%82%B0
 	gorm.Model
-	Email    string `gorm:"size:255"`
+	Email    string `gorm:"size:255;unique"`
 	Password string `gorm:"size:255"`
 	Username string `gorm:"size:255"`
 }
