@@ -28,11 +28,11 @@ func dbConnect() (int, error) {
 	if err != nil {
 		return 1, errors.New("failed to encrypt password")
 	}
-	db.Create(&User{FirstName: "toma", LastName: "morisawa", Password: password, Email: "morisawa" + random_str + "@exmaple.com"})
+	db.Create(&User{Username: "morisawa", Password: password, Email: "morisawa" + random_str + "@exmaple.com"})
 
 	// Read
 	var user User
-	db.First(&user, "last_name = ?", "morisawa")
+	db.First(&user, "username = ?", "morisawa")
 
 	// パスワードの一致確認
 	err = compareHashAndPassword((&user).Password, "password")
@@ -41,14 +41,14 @@ func dbConnect() (int, error) {
 	}
 
 	// Update
-	db.Model(&user).Update("first_name", "toma")
-	db.Model(&user).Updates(User{FirstName: "toma2"})
-	db.Model(&user).Updates(map[string]interface{}{"first_name": "toma3"})
+	db.Model(&user).Update("username", "morisawa1")
+	db.Model(&user).Updates(User{Username: "morisawa2"})
+	db.Model(&user).Updates(map[string]interface{}{"username": "morisawa3"})
 
 	// Delete
 	// gorm.Modelを使う場合は論理削除となる
 	// https://gorm.io/ja_JP/docs/delete.html#%E8%AB%96%E7%90%86%E5%89%8A%E9%99%A4
-	db.Where("last_name = ?", "morisawa").Delete(&User{}) // find user with code D42
+	db.Where("username = ?", "morisawa3").Delete(&User{}) // find user with code D42
 
 	return 0, nil
 }

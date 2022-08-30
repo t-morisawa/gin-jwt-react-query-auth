@@ -10,10 +10,9 @@ import (
 
 type User struct {
 	gorm.Model
-	FirstName string `gorm:"size:255"`
-	Password  string `gorm:"size:255"`
-	LastName  string `gorm:"size:255"`
-	Email     string `gorm:"size:255"`
+	Username string `gorm:"size:255"`
+	Password string `gorm:"size:255"`
+	Email    string `gorm:"size:255"`
 }
 
 const DSN = "user:password@tcp(gin-jwt-react-query-auth_db_1:3306)/database?charset=utf8mb4&parseTime=True&loc=Local"
