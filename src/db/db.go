@@ -28,6 +28,7 @@ func compareHashAndPassword(hash, password string) error {
 }
 
 func CreateUser(user *User) error {
+	// パスワードはハッシュ化されている想定
 	db, err := gorm.Open(mysql.Open(DSN), &gorm.Config{})
 	if err != nil {
 		return errors.New("failed to connect database")
