@@ -14,9 +14,9 @@ import (
 type User struct {
 	gorm.Model
 	FirstName string `gorm:"size:255"`
+	Password  string `gorm:"size:255"`
 	LastName  string `gorm:"size:255"`
 	Email     string `gorm:"size:255"`
-	Status    bool
 }
 
 const DSN = "user:password@tcp(gin-jwt-react-query-auth_db_1:3306)/database?charset=utf8mb4&parseTime=True&loc=Local"
@@ -53,7 +53,7 @@ func dbConnect() (int, error) {
 	// ユーザ作成
 	rand.Seed(time.Now().UnixNano())
 	random_str := fmt.Sprint(rand.Intn(9999))
-	db.Create(&User{FirstName: "toma", LastName: "morisawa", Email: "morisawa" + random_str + "@exmaple.com", Status: true})
+	db.Create(&User{FirstName: "toma", LastName: "morisawa", Email: "morisawa" + random_str + "@exmaple.com"})
 
 	// Read
 	var user User
