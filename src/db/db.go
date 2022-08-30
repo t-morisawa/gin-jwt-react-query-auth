@@ -13,7 +13,7 @@ type User struct {
 	// https://gorm.io/ja_JP/docs/models.html#%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89%E3%81%AB%E6%8C%87%E5%AE%9A%E5%8F%AF%E8%83%BD%E3%81%AA%E3%82%BF%E3%82%B0
 	gorm.Model
 	Email    string `gorm:"size:255;unique"`
-	Password string `gorm:"size:255"`
+	Password string `gorm:"size:255"` // ハッシュ化されたパスワードを格納すること
 	Username string `gorm:"size:255"`
 }
 
@@ -34,7 +34,10 @@ func CreateUser(user *User) error {
 	if err != nil {
 		return errors.New("failed to connect database")
 	}
-	db.Create(user)
+	result := db.Create(user)
+	if result.Error != nil {
+		return errors.New("failed to create user")
+	}
 
 	return nil
 }
@@ -45,8 +48,10 @@ func GetUser(email string) (*User, error) {
 		return nil, errors.New("failed to connect database")
 	}
 	var user User
-	db.First(&user, "email = ?", email)
-
+	result := db.First(&user, "email = ?", email)
+	if result.Error != nil {
+		return nil, errors.New("failed to get user")
+	}
 	return &user, nil
 }
 
