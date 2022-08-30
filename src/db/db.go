@@ -53,12 +53,21 @@ func dbConnect() (int, error) {
 	// ユーザ作成
 	rand.Seed(time.Now().UnixNano())
 	random_str := fmt.Sprint(rand.Intn(9999))
-	db.Create(&User{FirstName: "toma", LastName: "morisawa", Email: "morisawa" + random_str + "@exmaple.com"})
+	password, err := passwordEncrypt("password")
+	if err != nil {
+		return 1, errors.New("failed to encrypt password")
+	}
+	db.Create(&User{FirstName: "toma", LastName: "morisawa", Password: password, Email: "morisawa" + random_str + "@exmaple.com"})
 
 	// Read
 	var user User
 	// db.First(&user, 1)                           // find user with integer primary key
 	db.First(&user, "last_name = ?", "morisawa") // find user with code D42
+
+	err = compareHashAndPassword((&user).Password, "password")
+	if err != nil {
+		return 1, errors.New("wrong password")
+	}
 
 	// Update - update user's price to 200
 	db.Model(&user).Update("first_name", "toma")
