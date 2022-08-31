@@ -8,6 +8,7 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/hrs-o/docker-go/db"
 )
 
 type login struct {
@@ -59,15 +60,16 @@ func main() {
 			userID := loginVals.Username
 			password := loginVals.Password
 
-			if (userID == "admin" && password == "admin") || (userID == "test" && password == "test") {
-				return &User{
-					UserName:  userID,
-					LastName:  "Bo-Yi",
-					FirstName: "Wu",
-				}, nil
+			user, err := db.Login(userID, password)
+			if err != nil {
+				return nil, jwt.ErrFailedAuthentication
 			}
 
-			return nil, jwt.ErrFailedAuthentication
+			return &User{
+				UserName:  user.Email,
+				LastName:  "",
+				FirstName: user.Username,
+			}, nil
 		},
 		// ログイン認証OK後, JWTのクレームに含めるデータを生成する
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
