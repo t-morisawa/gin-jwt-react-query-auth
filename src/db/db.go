@@ -1,8 +1,6 @@
 package db
 
 import (
-	"errors"
-
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -32,11 +30,11 @@ func CreateUser(user *User) error {
 	// パスワードはハッシュ化されている想定
 	db, err := gorm.Open(mysql.Open(DSN), &gorm.Config{})
 	if err != nil {
-		return errors.New("failed to connect database")
+		return err
 	}
 	result := db.Create(user)
 	if result.Error != nil {
-		return errors.New("failed to create user")
+		return err
 	}
 
 	return nil
@@ -45,7 +43,7 @@ func CreateUser(user *User) error {
 func SignUp(email string, passwordRaw string, username string) error {
 	password, err := passwordEncrypt(passwordRaw)
 	if err != nil {
-		return errors.New("failed to encrypt password")
+		return err
 	}
 	err = CreateUser(&User{Username: username, Password: password, Email: email})
 	if err != nil {
@@ -57,12 +55,12 @@ func SignUp(email string, passwordRaw string, username string) error {
 func GetUser(email string) (*User, error) {
 	db, err := gorm.Open(mysql.Open(DSN), &gorm.Config{})
 	if err != nil {
-		return nil, errors.New("failed to connect database")
+		return nil, err
 	}
 	var user User
 	result := db.First(&user, "email = ?", email)
 	if result.Error != nil {
-		return nil, errors.New("failed to get user")
+		return nil, err
 	}
 	return &user, nil
 }
@@ -70,11 +68,11 @@ func GetUser(email string) (*User, error) {
 func Login(email string, passwordRaw string) (*User, error) {
 	user, err := GetUser(email)
 	if err != nil {
-		return nil, errors.New("failed to login")
+		return nil, err
 	}
 	err = compareHashAndPassword(user.Password, passwordRaw)
 	if err != nil {
-		return nil, errors.New("wrong password")
+		return nil, err
 	}
 	return user, nil
 }
