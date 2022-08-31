@@ -24,20 +24,16 @@ func dbConnect() (int, error) {
 	// ユーザ作成
 	rand.Seed(time.Now().UnixNano())
 	random_str := fmt.Sprint(rand.Intn(9999))
-	password, err := passwordEncrypt("password")
-	if err != nil {
-		return 1, errors.New("failed to encrypt password")
-	}
-	db.Create(&User{Username: "morisawa", Password: password, Email: "morisawa" + random_str + "@exmaple.com"})
+	SignUp("morisawa"+random_str+"@exmaple.com", "password", "morisawa")
 
 	// Read
 	var user User
-	db.First(&user, "username = ?", "morisawa")
+	db.Last(&user, "username = ?", "morisawa")
 
 	// パスワードの一致確認
 	err = compareHashAndPassword((&user).Password, "password")
 	if err != nil {
-		return 1, errors.New("wrong password")
+		return 1, err
 	}
 
 	// Update
