@@ -42,6 +42,18 @@ func CreateUser(user *User) error {
 	return nil
 }
 
+func SignUp(email string, passwordRaw string, username string) error {
+	password, err := passwordEncrypt(passwordRaw)
+	if err != nil {
+		return errors.New("failed to encrypt password")
+	}
+	err = CreateUser(&User{Username: username, Password: password, Email: email})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func GetUser(email string) (*User, error) {
 	db, err := gorm.Open(mysql.Open(DSN), &gorm.Config{})
 	if err != nil {
