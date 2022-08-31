@@ -3,3 +3,4 @@ src/.air.toml
 src/go.sum
 src/tmp/main
 docker-go
+src/tmp/build-errors.log
