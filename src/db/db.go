@@ -60,7 +60,7 @@ func GetUser(email string) (*User, error) {
 	var user User
 	result := db.First(&user, "email = ?", email)
 	if result.Error != nil {
-		return nil, err
+		return nil, result.Error
 	}
 	return &user, nil
 }
