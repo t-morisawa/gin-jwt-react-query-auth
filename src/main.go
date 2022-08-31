@@ -91,11 +91,7 @@ func main() {
 		// 1. JWTが有効であるかをチェックする
 		// 2. 当該のユーザがリソースにアクセス可能かをチェックする
 		Authorizator: func(data interface{}, c *gin.Context) bool {
-			if v, ok := data.(*User); ok && v.UserName == "admin" {
-				return true
-			}
-
-			return false
+			return true
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			c.JSON(code, gin.H{
