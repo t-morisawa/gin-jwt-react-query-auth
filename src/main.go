@@ -16,6 +16,12 @@ type login struct {
 	Password string `form:"password" json:"password" binding:"required"`
 }
 
+type signUp struct {
+	Email    string `form:"email" json:"email" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+	Username string `form:"username" json:"username" binding:"required"`
+}
+
 var identityKey = "id"
 
 func meHandler(c *gin.Context) {
@@ -25,6 +31,19 @@ func meHandler(c *gin.Context) {
 		"email": claims[identityKey],
 		"name":  user.(*User).UserName,
 	})
+}
+
+func signUpHandler(c *gin.Context) {
+	var form signUp
+	c.BindJSON(&form)
+	err := db.SignUp(form.Email, form.Password, form.Username)
+	if err != nil {
+		log.Fatal(err)
+		c.JSON(400, gin.H{"code": "BAD_REQUEST", "message": "bad request"})
+		return
+	}
+	c.JSON(200, gin.H{})
+	return
 }
 
 // User demo
@@ -134,6 +153,8 @@ func main() {
 	// カスタマイズは Authenticator, PayloadFunc, LoginResponse によって行う.
 	// レスポンスボディにJWTが含まれる.
 	r.POST("/auth/login", authMiddleware.LoginHandler)
+
+	r.POST("/auth/register", signUpHandler)
 
 	r.NoRoute(authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
 		claims := jwt.ExtractClaims(c)
