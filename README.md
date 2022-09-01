@@ -22,12 +22,23 @@ docker-compose up -d
 ### add package
 
 ```
-docker-compose exec web sh
-export GO111MODULE=on
-go get github.com/appleboy/gin-jwt/v2
+cd src
+go mod tidy
 ```
 
 when installed, go.mod and go.sum are updated.
+
+### test
+
+```
+docker-compose exec web sh
+export CGO_ENABLED=0
+go test ./...
+```
+
+if CGO_ENABLED=1, tests cannot be run. with message 'exec: "gcc": executable file not found in $PATH.'
+
+https://zenn.dev/tomi/articles/2020-10-22-go-docker-test
 
 ### ref 
 

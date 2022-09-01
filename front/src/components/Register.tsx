@@ -21,18 +21,17 @@ export function Register() {
         }}
       >
         <input
-          autoComplete="new-password"
-          placeholder="username"
-          name="username"
+          placeholder="email"
+          name="email"
           onChange={onChange}
         />
-        <input placeholder="name" name="name" onChange={onChange} />
         <input
           type="password"
           placeholder="password"
           name="password"
           onChange={onChange}
         />
+        <input placeholder="username" name="username" onChange={onChange} />
         <button type="submit">Submit</button>
         {error && (
           <div style={{ color: 'tomato' }}>

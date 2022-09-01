@@ -8,11 +8,18 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/hrs-o/docker-go/db"
 )
 
 type login struct {
 	Username string `form:"username" json:"username" binding:"required"`
 	Password string `form:"password" json:"password" binding:"required"`
+}
+
+type signUp struct {
+	Email    string `form:"email" json:"email" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+	Username string `form:"username" json:"username" binding:"required"`
 }
 
 var identityKey = "id"
@@ -24,6 +31,19 @@ func meHandler(c *gin.Context) {
 		"email": claims[identityKey],
 		"name":  user.(*User).UserName,
 	})
+}
+
+func signUpHandler(c *gin.Context) {
+	var form signUp
+	c.BindJSON(&form)
+	err := db.SignUp(form.Email, form.Password, form.Username)
+	if err != nil {
+		log.Fatal(err)
+		c.JSON(400, gin.H{"code": "BAD_REQUEST", "message": "bad request"})
+		return
+	}
+	c.JSON(200, gin.H{})
+	return
 }
 
 // User demo
@@ -59,15 +79,16 @@ func main() {
 			userID := loginVals.Username
 			password := loginVals.Password
 
-			if (userID == "admin" && password == "admin") || (userID == "test" && password == "test") {
-				return &User{
-					UserName:  userID,
-					LastName:  "Bo-Yi",
-					FirstName: "Wu",
-				}, nil
+			user, err := db.Login(userID, password)
+			if err != nil {
+				return nil, jwt.ErrFailedAuthentication
 			}
 
-			return nil, jwt.ErrFailedAuthentication
+			return &User{
+				UserName:  user.Email,
+				LastName:  "",
+				FirstName: user.Username,
+			}, nil
 		},
 		// ログイン認証OK後, JWTのクレームに含めるデータを生成する
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
@@ -89,11 +110,7 @@ func main() {
 		// 1. JWTが有効であるかをチェックする
 		// 2. 当該のユーザがリソースにアクセス可能かをチェックする
 		Authorizator: func(data interface{}, c *gin.Context) bool {
-			if v, ok := data.(*User); ok && v.UserName == "admin" {
-				return true
-			}
-
-			return false
+			return true
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			c.JSON(code, gin.H{
@@ -136,6 +153,8 @@ func main() {
 	// カスタマイズは Authenticator, PayloadFunc, LoginResponse によって行う.
 	// レスポンスボディにJWTが含まれる.
 	r.POST("/auth/login", authMiddleware.LoginHandler)
+
+	r.POST("/auth/register", signUpHandler)
 
 	r.NoRoute(authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
 		claims := jwt.ExtractClaims(c)
